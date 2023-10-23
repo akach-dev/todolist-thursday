@@ -5,7 +5,7 @@ import {todoListsApi} from "../api/todolists-api";
 export default {
   title: 'API'
 }
-const config = {withCredentials: true}
+
 
 export const GetTodoLists = () => {
   const [state, setState] = useState<any>(null)

@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect} from 'react'
 import './App.css';
-import {Todolist} from './Todolist';
-import {AddItemForm} from './AddItemForm';
+import {Todolist} from '../features/Todolist';
+import {AddItemForm} from '../components/AddItemForm';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
@@ -18,15 +18,15 @@ import {
   FilterValuesType,
   removeTodolistAC,
   TodolistDomainType, updateTodoListTC
-} from './state/todolists-reducer'
+} from '../state/todo-lists-reducer'
 import {
   addTaskAC,
   addTaskTC,
   deleteTaskTC,
   removeTaskAC, updateTaskTC
-} from './state/tasks-reducer';
-import {useAppDispatch, useAppSelector} from './state/store';
-import {TaskStatuses, TaskType, todoListsAPI} from './api/todo-lists-a-p-i'
+} from '../state/tasks-reducer';
+import {useAppDispatch, useAppSelector} from '../state/store';
+import {TaskStatuses, TaskType, todoListsAPI} from '../api/todo-lists-a-p-i'
 
 
 export type TasksStateType = {

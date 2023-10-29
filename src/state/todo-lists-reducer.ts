@@ -1,14 +1,10 @@
-import {v1} from 'uuid';
 import {todoListsAPI, TodolistType} from "../api/todo-lists-a-p-i";
 import {Dispatch} from "redux";
-
 
 const initialState: Array<TodolistDomainType> = [
   /*{id: todolistId1, title: 'What to learn', filter: 'all', addedDate: '', order: 0},
   {id: todolistId2, title: 'What to buy', filter: 'all', addedDate: '', order: 0}*/
 ]
-
-
 export const todoListsReducer = (state: TodolistDomainType[] = initialState, action: ActionsType): TodolistDomainType[] => {
   switch (action.type) {
     case "SET-TODOLISTS":

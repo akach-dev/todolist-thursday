@@ -7,6 +7,7 @@ import {
 import {TaskPriorities, TaskStatuses, TaskType, todoListsAPI, UpdateTaskModelType} from '../api/todo-lists-a-p-i'
 import {Dispatch} from "redux";
 import {AppRootStateType} from "./store";
+import {setAppErrorAC, SetErrorActionType, setAppStatusAC, SetStatusActionType} from "../app/app-reducer";
 
 
 const initialState: TasksStateType = {}
@@ -72,8 +73,11 @@ export const setTaskAC = (tasks: TaskType[], todolistId: string) => ({type: 'SET
 
 // thunks creator
 export const getTaskTC = (todolistId: string) => (dispatch: Dispatch<ActionsType>) => {
+  dispatch(setAppStatusAC("loading"))
   todoListsAPI.getTasks(todolistId).then(res => {
     dispatch(setTaskAC(res.data.items, todolistId))
+    dispatch(setAppStatusAC("succeeded"))
+
   })
 }
 export const deleteTaskTC = (todolistId: string, taskId: string) => (dispatch: Dispatch<ActionsType>) => {
@@ -82,8 +86,14 @@ export const deleteTaskTC = (todolistId: string, taskId: string) => (dispatch: D
   })
 }
 export const addTaskTC = (todolistId: string, title: string) => (dispatch: Dispatch<ActionsType>) => {
+  dispatch(setAppStatusAC("loading"))
+
   todoListsAPI.createTask(todolistId, title)
-     .then(res => dispatch(addTaskAC(res.data.data.item)))
+     .then(res => {
+       if (res.data.resultCode === 0) dispatch(addTaskAC(res.data.data.item))
+       if (res.data.messages.length) dispatch(setAppErrorAC(res.data.messages[0]))
+       dispatch(setAppStatusAC("succeeded"))
+     })
 }
 export const updateTaskTC = (taskId: string, model: UpdateDomainTaskModelType, todolistId: string) =>
    (dispatch: Dispatch<ActionsType>, getState: () => AppRootStateType) => {
@@ -103,7 +113,6 @@ export const updateTaskTC = (taskId: string, model: UpdateDomainTaskModelType, t
           .then(res =>
              dispatch(updateTaskAC(taskId, model, todolistId)))
      }
-
    }
 
 
@@ -117,6 +126,8 @@ export type UpdateDomainTaskModelType = {
   deadline?: string
 }
 type ActionsType =
+   SetStatusActionType |
+   SetErrorActionType |
    ReturnType<typeof removeTaskAC>
    | ReturnType<typeof addTaskAC>
    | ReturnType<typeof updateTaskAC>

@@ -27,19 +27,30 @@ import {
 } from '../state/tasks-reducer';
 import {useAppDispatch, useAppSelector} from '../state/store';
 import {TaskStatuses, TaskType, todoListsAPI} from '../api/todo-lists-a-p-i'
+import {LinearProgress} from "@mui/material";
+import {ErrorSnackBar} from "../components/ErrorSnackBar/ErrorSnackBar";
+import {StatusType} from "./app-reducer";
 
 
 export type TasksStateType = {
   [key: string]: Array<TaskType>
 }
+type PropsType = {
+  demo?: boolean
+}
 
-function App() {
+
+function App({demo = false}: PropsType) {
 
   const todoLists = useAppSelector<Array<TodolistDomainType>>(state => state.todoLists)
   const tasks = useAppSelector<TasksStateType>(state => state.tasks)
+  const status = useAppSelector<StatusType>(state => state.app.status)
   const dispatch = useAppDispatch();
 
   useEffect(() => {
+    if (demo) {
+      return;
+    }
     dispatch(fetchTodoListsTC())
   }, []);
 
@@ -72,6 +83,7 @@ function App() {
 
   return (
      <div className="App">
+       <ErrorSnackBar/>
        <AppBar position="static">
          <Toolbar>
            <IconButton edge="start" color="inherit" aria-label="menu">
@@ -82,6 +94,7 @@ function App() {
            </Typography>
            <Button color="inherit">Login</Button>
          </Toolbar>
+         {status === "loading" && <LinearProgress/>}
        </AppBar>
        <Container fixed>
          <Grid container style={{padding: '20px'}}>
@@ -95,14 +108,12 @@ function App() {
                return <Grid item key={tl.id}>
                  <Paper style={{padding: '10px'}}>
                    <Todolist
-                      id={tl.id}
-                      title={tl.title}
+                      todoList={tl}
                       tasks={allTodolistTasks}
                       removeTask={removeTask}
                       changeFilter={changeFilter}
                       addTask={addTask}
                       changeTaskStatus={changeStatus}
-                      filter={tl.filter}
                       removeTodolist={removeTodolist}
                       changeTaskTitle={changeTaskTitle}
                       changeTodolistTitle={changeTodolistTitle}

@@ -42,6 +42,8 @@ export const tasksReducer = (state: TasksStateType = initialState, action: Actio
   switch (action.type) {
     case "GET-TODOLISTS":
       // return Object.fromEntries(action.todolists.map(todoList => ([todoList.id, []])))
+
+       
       return action.todolists.reduce((acc, todoList) => {
         acc[todoList.id] = [];
         return acc;

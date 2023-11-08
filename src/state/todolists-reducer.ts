@@ -1,5 +1,6 @@
 import {v1} from 'uuid';
-import {TodolistType} from '../api/todolists-api'
+import {todolistsAPI, TodolistType} from '../api/todolists-api'
+import {AnyAction, Dispatch} from "redux";
 
 export type RemoveTodolistActionType = ReturnType<typeof removeTodolistAC>
 export type AddTodolistActionType = ReturnType<typeof addTodolistAC>
@@ -55,6 +56,16 @@ export const todolistsReducer = (state: Array<TodolistDomainType> = initialState
   }
 }
 
+// thunks creator
+export const setTodoListTC = () => (dispatch: Dispatch) => {
+  todolistsAPI.getTodolists()
+     .then(response => {
+       dispatch(getTodolistsAC(response.data))
+     })
+}
+
+
+// actions creator
 export const removeTodolistAC = (todolistId: string) => {
   return {type: 'REMOVE-TODOLIST', id: todolistId} as const
 }

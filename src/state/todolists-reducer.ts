@@ -63,6 +63,12 @@ export const setTodoListTC = () => (dispatch: Dispatch) => {
        dispatch(setTodolistsAC(response.data))
      })
 }
+export const removeTodoListTC = (todolistId: string) => (dispatch: Dispatch) => {
+  todolistsAPI.deleteTodolist(todolistId)
+     .then(response => {
+       dispatch(removeTodolistAC(todolistId))
+     })
+}
 
 // actions creator
 export const removeTodolistAC = (todolistId: string) => {
@@ -77,7 +83,6 @@ export const changeTodolistTitleAC = (id: string, title: string) => {
 export const changeTodolistFilterAC = (id: string, filter: FilterValuesType) => {
   return {type: 'CHANGE-TODOLIST-FILTER', id: id, filter: filter} as const
 }
-
 export const setTodolistsAC = (todolists: TodolistType[]) => {
   return {type: 'SET-TODOLISTS', todolists} as const
 }

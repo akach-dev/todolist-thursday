@@ -56,12 +56,12 @@ function App() {
   }, []);
 
   const changeStatus = useCallback(function (id: string, status: TaskStatuses, todolistId: string) {
-    const action = updateTaskTC(id, {status}, todolistId);
+    const action = updateTaskTC(todolistId, {status}, id);
     dispatch(action);
   }, []);
 
   const changeTaskTitle = useCallback(function (id: string, title: string, todolistId: string) {
-    const action = updateTaskTC(id, {title}, todolistId);
+    const action = updateTaskTC(todolistId, {title}, id);
     dispatch(action);
   }, []);
 

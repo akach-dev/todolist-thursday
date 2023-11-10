@@ -31,7 +31,8 @@ export type TasksStateType = {
 
 function App() {
   useEffect(() => {
-    dispatch(setTodoListTC)
+    console.log('setTodoListTC')
+    dispatch(setTodoListTC())
   }, []);
 
   const todolists = useAppSelector<Array<TodolistDomainType>>(state => state.todolists)

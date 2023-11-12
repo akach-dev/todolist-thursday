@@ -6,6 +6,9 @@ const initialState: Array<TodolistDomainType> = []
 
 export const todolistsReducer = (state: Array<TodolistDomainType> = initialState, action: ActionsType): Array<TodolistDomainType> => {
   switch (action.type) {
+    case "CHANGE-TODOLISTS-ENTITY-STATUS":
+      return state.map(todoList =>
+         todoList.id === action.id ? {...todoList, entityStatus: action.status} : todoList)
     case 'REMOVE-TODOLIST':
       return state.filter(tl => tl.id !== action.id)
     case 'ADD-TODOLIST':
@@ -35,6 +38,7 @@ export const changeTodolistFilterAC = (id: string, filter: FilterValuesType) => 
   filter
 } as const)
 export const setTodolistsAC = (todolists: Array<TodolistType>) => ({type: 'SET-TODOLISTS', todolists} as const)
+export const setTodolistsEntityStatusAC = (status: RequestStatusType, id: string) => ({type: 'CHANGE-TODOLISTS-ENTITY-STATUS', status, id} as const)
 
 // thunks
 export const fetchTodolistsTC = () => {
@@ -50,9 +54,12 @@ export const fetchTodolistsTC = () => {
 }
 export const removeTodolistTC = (todolistId: string) => {
   return (dispatch: Dispatch<ActionsType>) => {
+    dispatch(setAppStatusAC("loading"))
+    dispatch(setTodolistsEntityStatusAC('loading', todolistId))
     todolistsAPI.deleteTodolist(todolistId)
        .then((res) => {
          dispatch(removeTodolistAC(todolistId))
+         dispatch(setAppStatusAC("succeeded"))
        })
   }
 }
@@ -79,6 +86,7 @@ export const changeTodolistTitleTC = (id: string, title: string) => {
 export type AddTodolistActionType = ReturnType<typeof addTodolistAC>;
 export type RemoveTodolistActionType = ReturnType<typeof removeTodolistAC>;
 export type SetTodolistsActionType = ReturnType<typeof setTodolistsAC>;
+export type SetTodolistsEntityStatusActionType = ReturnType<typeof setTodolistsEntityStatusAC>;
 type ActionsType =
    | RemoveTodolistActionType
    | AddTodolistActionType
@@ -87,6 +95,7 @@ type ActionsType =
    | SetTodolistsActionType
    | SetAppErrorsActionType
    | SetAppStatusActionType
+   | SetTodolistsEntityStatusActionType
 export type FilterValuesType = 'all' | 'active' | 'completed';
 export type TodolistDomainType = TodolistType & {
   filter: FilterValuesType

@@ -3,6 +3,8 @@ import {TaskPriorities, TaskStatuses, TaskType, todolistsAPI, UpdateTaskModelTyp
 import {Dispatch} from 'redux'
 import {AppRootStateType} from '../../app/store'
 import {setAppErrorsAC, SetAppErrorsActionType, setAppStatusAC, SetAppStatusActionType} from "../../app/app-reducer";
+import {AxiosError} from "axios";
+import {handleServerAppError, handleServerNetworkError} from "../../utils/error-utils";
 
 const initialState: TasksStateType = {}
 
@@ -73,13 +75,11 @@ export const addTaskTC = (title: string, todolistId: string) => (dispatch: Dispa
          dispatch(addTaskAC(res.data.data.item))
          dispatch(setAppStatusAC("succeeded"))
        } else {
-         if (res.data.messages.length) {
-           dispatch(setAppErrorsAC(res.data.messages[0]))
-         } else {
-           dispatch(setAppErrorsAC('Some error occurred'))
-         }
-         dispatch(setAppStatusAC("failed"))
+         handleServerAppError(res.data, dispatch)
        }
+     })
+     .catch((reason: AxiosError<ErrorType>) => {
+       handleServerNetworkError(reason, dispatch)
      })
 }
 export const updateTaskTC = (taskId: string, domainModel: UpdateDomainTaskModelType, todolistId: string) =>
@@ -104,8 +104,15 @@ export const updateTaskTC = (taskId: string, domainModel: UpdateDomainTaskModelT
 
      todolistsAPI.updateTask(todolistId, taskId, apiModel)
         .then(res => {
-          const action = updateTaskAC(taskId, domainModel, todolistId)
-          dispatch(action)
+          if (res.data.resultCode === 0) {
+            const action = updateTaskAC(taskId, domainModel, todolistId)
+            dispatch(action)
+          } else {
+            handleServerAppError(res.data, dispatch)
+          }
+        })
+        .catch((reason: AxiosError<ErrorType>) => {
+          handleServerNetworkError(reason, dispatch)
         })
    }
 
@@ -131,3 +138,8 @@ type ActionsType =
    | ReturnType<typeof setTasksAC>
    | SetAppErrorsActionType
    | SetAppStatusActionType
+export type ErrorType = {
+  message: string
+  field: string
+  code: number
+}

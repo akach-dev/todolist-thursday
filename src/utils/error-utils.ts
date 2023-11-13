@@ -14,5 +14,5 @@ export const handleServerAppError = <D>(data: ResponseType<D>, dispatch: AppThun
 }
 export const handleServerNetworkError = (reason: AxiosError<ErrorType>, dispatch: AppThunkDispatch) => {
   dispatch(setAppErrorsAC(reason.message))
-  dispatch(setAppStatusAC("succeeded"))
+  dispatch(setAppStatusAC("failed"))
 }

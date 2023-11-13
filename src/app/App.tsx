@@ -7,9 +7,9 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
-import {Menu} from '@mui/icons-material';
-import {LinearProgress} from "@mui/material";
-import {useAppSelector} from "./store";
+import Menu from '@mui/icons-material/Menu';
+import LinearProgress from "@mui/material/LinearProgress";
+import {useAppSelector} from "./store"
 import {RequestStatusType} from "./app-reducer";
 import {ErrorSnackbar} from "../components/ErrorSnackbar/ErrorSnackbar";
 

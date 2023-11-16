@@ -29,8 +29,10 @@ export const Login = () => {
       } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
         errors.email = 'Invalid email address'
       }
-      if (values.password.length <= 3) {
-        errors.password = 'Must be 4 characters or less'
+      if (!values.password) {
+        errors.password = 'Required'
+      } else if (values.password.length < 5) {
+        errors.password = 'Must be 5 characters or less'
       }
       console.log(errors)
 
@@ -39,6 +41,7 @@ export const Login = () => {
     },
     onSubmit: values => {
       alert(JSON.stringify(values))
+      formik.resetForm()
     },
   })
 
@@ -61,22 +64,21 @@ export const Login = () => {
 
             <TextField label="Email"
                        margin="normal"
+                       error={!!(formik.touched.email && formik.errors.email)}
                        type={'email'}
+                       helperText={formik.touched.email && formik.errors.email}
                        {...formik.getFieldProps('email')}
             />
 
-            {formik.touched.email && formik.errors.email ?
-               <div style={{color: 'red'}}>{formik.errors.email}</div> : null}
 
-            <TextField
-               type="password"
-               label="Password"
-               margin="normal"
-               {...formik.getFieldProps('password')}
+            <TextField type="password"
+                       label="Password"
+                       margin="normal"
+                       error={!!(formik.touched.password && formik.errors.password)}
+                       helperText={formik.touched.password && formik.errors.password}
+                       {...formik.getFieldProps('password')}
             />
 
-            {formik.touched.password && formik.errors.password ?
-               <div style={{color: 'red'}}>{formik.errors.password}</div> : null}
 
             <FormControlLabel
                label={'Remember me'}

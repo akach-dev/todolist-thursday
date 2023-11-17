@@ -1,7 +1,7 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import './App.css'
 import {TodolistsList} from '../features/TodolistsList/TodolistsList'
-import {useAppSelector} from './store'
+import {useAppDispatch, useAppSelector} from './store'
 import {RequestStatusType} from './app-reducer'
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -14,10 +14,32 @@ import {Menu} from '@mui/icons-material';
 import {ErrorSnackbar} from '../components/ErrorSnackbar/ErrorSnackbar'
 import {Navigate, Route, Routes} from "react-router-dom";
 import {Login} from "../features/Login/Login";
+import {initializeAppTC, logoutTC} from "../features/Login/auth-reducer";
+import CircularProgress from "@mui/material/CircularProgress";
 
 
 function App() {
+  const dispatch = useAppDispatch()
   const status = useAppSelector<RequestStatusType>((state) => state.app.status)
+  const isInitialized = useAppSelector<boolean>(state => state.app.isInitialized)
+  const isLoggedIn = useAppSelector<boolean>(state => state.auth.isLoggedIn)
+
+
+  useEffect(() => {
+    console.log(1)
+    dispatch(initializeAppTC())
+  }, []);
+
+  if (!isInitialized) {
+    return <div
+       style={{position: 'fixed', top: '30%', textAlign: 'center', width: '100%'}}>
+      <CircularProgress/>
+    </div>
+  }
+
+  const logOutHandler = () => dispatch(logoutTC())
+
+
   return (
      <div className="App">
        <ErrorSnackbar/>
@@ -29,7 +51,7 @@ function App() {
            <Typography variant="h6">
              News
            </Typography>
-           <Button color="inherit">Login</Button>
+           {isLoggedIn && <Button color="inherit" onClick={logOutHandler}> log out</Button>}
          </Toolbar>
          {status === 'loading' && <LinearProgress/>}
        </AppBar>

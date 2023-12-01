@@ -1,45 +1,27 @@
-import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-
-const initialState: InitialStateType = {
-  status: 'idle',
-  error: null,
-  isInitialized: false
+const initialState = {
+  status: 'idle' as RequestStatusType
 }
-const slice = createSlice({
-  name: 'app',
-  initialState,
-  reducers: {
-    setAppErrorAC(state, action: PayloadAction<{ error: string | null }>) {
-      state.error = action.payload.error
-    },
-    setAppStatusAC(state, action: PayloadAction<{ status: RequestStatusType }>) {
-      state.status = action.payload.status
-    },
-    setAppIsInitializedAC(state, action: PayloadAction<{ value: boolean }>) {
-      state.isInitialized = action.payload.value
-    }
+
+
+export const appReducer = (state: InitialState = initialState, action: ActionsType): InitialState => {
+  switch (action.type) {
+    case "app/SET-STATUS":
+      return {
+        ...state, status: action.status
+      }
+
+    default:
+      return state
   }
-})
-
-
-export const appReducer = slice.reducer
-export const {setAppErrorAC, setAppStatusAC, setAppIsInitializedAC} = slice.actions
-
-export type RequestStatusType = 'idle' | 'loading' | 'succeeded' | 'failed'
-export type InitialStateType = {
-  // происходит ли сейчас взаимодействие с сервером
-  status: RequestStatusType
-  // если ошибка какая-то глобальная произойдёт - мы запишем текст ошибки сюда
-  error: string | null
-  isInitialized: boolean
 }
 
+// types
+export type RequestStatusType = 'idle' | 'loading' | 'succeeded' | 'failed'
+export type SetAppStatus = ReturnType<typeof setAppStatus>
+type InitialState = typeof initialState
+type ActionsType = SetAppStatus
 
-export type SetAppErrorActionType = ReturnType<typeof setAppErrorAC>
-export type SetAppStatusActionType = ReturnType<typeof setAppStatusAC>
-export type SetAppIsInitializedActionType = ReturnType<typeof setAppIsInitializedAC>
+// actions
+export const setAppStatus = (status: RequestStatusType) => ({type: 'app/SET-STATUS' as const, status})
 
-type ActionsType =
-   | SetAppErrorActionType
-   | SetAppStatusActionType
-   | SetAppIsInitializedActionType
+

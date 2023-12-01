@@ -42,19 +42,20 @@ export const login = (data: any) => async (dispatch: Dispatch) => {
 }
 export const me = () => async (dispatch: Dispatch) => {
   dispatch(setAppStatus("loading"))
+
   try {
     const res = await AuthApi.me()
     if (res.data.resultCode === 0) {
-      dispatch(setAppIsInitialized(true))
       dispatch(setIsLoggedIn(true))
       dispatch(setAppStatus("succeeded"))
     } else {
       handleServerAppError(res.data, dispatch)
     }
-
   } catch (e) {
     handleServerNetworkAppError(e, dispatch)
   }
+  dispatch(setAppIsInitialized(true))
+  
 }
 
 // types

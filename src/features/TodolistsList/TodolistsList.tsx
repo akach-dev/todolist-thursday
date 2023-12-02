@@ -11,27 +11,23 @@ import {
 } from './todolists-reducer'
 import {addTaskTC, removeTaskTC, TasksStateType, updateTaskTC} from './tasks-reducer'
 import {TaskStatuses} from '../../api/todolists-api'
-import {AddItemForm} from '../../components/AddItemForm/AddItemForm'
-import {Todolist} from './Todolist/Todolist'
-
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
+import {AddItemForm} from '../../components/AddItemForm/AddItemForm'
+import {Todolist} from './Todolist/Todolist'
 import {Navigate} from "react-router-dom";
 import {selectorIsLoggedIn} from "../Login/auth-selectors";
 
-export const TodolistsList: React.FC = () => {
 
+export const TodolistsList: React.FC = () => {
   const todolists = useAppSelector<Array<TodolistDomainType>>(state => state.todolists)
   const tasks = useAppSelector<TasksStateType>(state => state.tasks)
   const isLoggedIn = useAppSelector(selectorIsLoggedIn)
 
-
   const dispatch = useAppDispatch()
 
   useEffect(() => {
-    if (!isLoggedIn) {
-      return
-    }
+    if (!isLoggedIn) return
     const thunk = fetchTodolistsTC()
     dispatch(thunk)
   }, [])
@@ -74,11 +70,11 @@ export const TodolistsList: React.FC = () => {
   const addTodolist = useCallback((title: string) => {
     const thunk = addTodolistTC(title)
     dispatch(thunk)
-  }, [])
+  }, [dispatch])
 
 
   if (!isLoggedIn) {
-    return <Navigate to={'/login'}/>
+    return <Navigate to={'/login'} replace/>
   }
 
 
@@ -94,18 +90,15 @@ export const TodolistsList: React.FC = () => {
           return <Grid item key={tl.id}>
             <Paper style={{padding: '10px'}}>
               <Todolist
-                 id={tl.id}
-                 title={tl.title}
+                 todolist={tl}
                  tasks={allTodolistTasks}
                  removeTask={removeTask}
                  changeFilter={changeFilter}
                  addTask={addTask}
                  changeTaskStatus={changeStatus}
-                 filter={tl.filter}
                  removeTodolist={removeTodolist}
                  changeTaskTitle={changeTaskTitle}
                  changeTodolistTitle={changeTodolistTitle}
-                 entityStatus={tl.entityStatus}
               />
             </Paper>
           </Grid>
